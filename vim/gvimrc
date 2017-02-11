@@ -1,0 +1,13 @@
+
+" GUI Options: No Toolbar by default
+set go-=T
+
+colorscheme willz
+set transp=2
+
+set guifont=Source\ Code\ Pro:h14
+
+set columns=82
+set lines=60
+set visualbell
+

@@ -1,0 +1,160 @@
+
+" Colors
+set background=dark
+colorscheme desert
+
+" Printing, kept here for reference
+"set printdevice=EMEPR2
+"set printoptions=paper:A4,duplex:off,portrait:n
+
+" General Look and Feel
+syntax on
+set number
+set encoding=utf-8
+filetype plugin indent on
+filetype plugin on
+set ffs=unix,dos,mac
+set hidden                        " Don't hide buffers
+
+set nocompatible
+set encoding=utf-8
+set showcmd                       " display incomplete commands below the status line
+
+set wildmode=longest,list         " emacs-style tab completion when selecting files, etc
+set wildmenu                      " make tab completion for files/buffers act like bash
+set autoread                      " auto-reload buffers when files change on disk
+
+set showmatch                     " show matching brackets, etc
+set matchtime=2                   " ... and for how long
+set history=1000
+set cursorline                    " highlight the cursor line
+set wildignore=*.o,*.obj,*.pyc,*.pyo " Ignore these files always
+
+let mapleader=","
+
+" Backup Files
+set backupdir=./.backup,~/.backup
+set backup
+set writebackup
+
+" Auto manipulation/formatting
+set autoindent
+set textwidth=78
+set formatoptions=tcqor           " Autowrap text,comments format comments, auto insert comment leader
+
+" Default Whitespace Management
+set expandtab                     " use spaces, not tabs
+set shiftwidth=4                  " 2-space tabs
+set tabstop=4
+set softtabstop=4
+set wrap                          " wrap lines
+set linebreak                     " ... but only on whitespace
+set showbreak=+++\                " ... and show this
+
+" Search Options
+set hlsearch                      " highlight matches
+set incsearch                     " incremental searching
+set ignorecase                    " searches are case insensitive...
+set smartcase                     " ...unless they contain at least one capital letter
+
+set laststatus=2 
+set statusline=   " clear the statusline for when vimrc is reloaded
+set statusline+=%{fnamemodify('.',':p:h:t')}>   " pwd
+set statusline+=%f[%p%%]                     " filename, and % cursor through file
+set statusline+=%#Special#%h%m%r%w%*      " flags
+set statusline+=[%{strlen(&ft)?&ft:'none'},  " filetype
+set statusline+=%{strlen(&fenc)?&fenc:&enc}, " encoding
+set statusline+=%{&fileformat}]              " file format
+set statusline+=%=                           " right align
+set statusline+=%{fugitive#statusline()}\    " Git Status
+set statusline+=[%c:%8(0x%B%)]\ \            " current char
+set statusline+=%{'ts='.&tabstop}%{&expandtab?'S':'H'}\           " Tab Setting
+set statusline+=%P\                          " Show Viewport % through file
+
+" Pathogen
+call pathogen#infect()
+call pathogen#helptags()
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" CUSTOM AUTOCMDS
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+augroup vimrcEx
+  " Clear all autocmds in the group
+  autocmd!
+  " Jump to last cursor position unless it's invalid or in an event handler
+  autocmd BufReadPost *
+    \ if line("'\"") > 0 && line("'\"") <= line("$") |
+    \   exe "normal g`\"" |
+    \ endif
+
+  "for ruby, autoindent with two spaces, always expand tabs
+  autocmd FileType ruby,haml,eruby,yaml,html,javascript,sass,cucumber set ai sw=2 sts=2 et
+
+  autocmd FileType python let &colorcolumn=join(range(81,999),",")
+  autocmd FileType python setlocal foldmethod=indent ts=4 sts=4 shiftwidth=4
+
+  autocmd FileType xml setlocal foldmethod=syntax
+  autocmd FileType xslt setlocal foldmethod=syntax
+
+augroup END
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Key Mappings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+noremap <Leader>w <c-w>k
+noremap <Leader>s <c-w>j
+noremap <Leader>a <c-w>h
+noremap <Leader>d <c-w>l
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Plugin Config
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:xml_syntax_folding=1
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" CTRL P
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:ctrlp_mruf_relative = 1
+
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/](\.git|\.hg|\.svn|data|env|bin|include|lib)$',
+  \ 'file': '\v\.(exe|so|dll)$',
+  \ }
+
+noremap <Leader>b :CtrlPBuffer<CR>
+noremap <Leader>f :CtrlP<CR>
+noremap <Leader>t :CtrlPMixed<CR>
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Buffer Switch
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+function SwitchBuffer()
+  b#
+endfunction
+
+nmap <Tab> :call SwitchBuffer()<CR>
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Configure Jedi-Vim
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:jedi#popup_on_dot = 0
+let g:jedi#show_call_signatures = "2"
+let g:jedi#completions_enabled = 0
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Add the virtualenv's site-packages to vim path (Python)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"py << EOF
+"import os.path
+"import sys
+"import vim
+"if 'VIRTUAL_ENV' in os.environ:
+"    project_base_dir = os.environ['VIRTUAL_ENV']
+"    sys.path.insert(0, project_base_dir)
+"    activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
+"    execfile(activate_this, dict(__file__=activate_this))
+"EOF
+
