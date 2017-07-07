@@ -1,3 +1,4 @@
 # Proforma
 
-Font: https://github.com/tonsky/FiraCode
+A collection of utilities and script that I like to have when I start on a
+new PC.
